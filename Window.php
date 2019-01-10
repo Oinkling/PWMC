@@ -44,7 +44,7 @@ class Window extends PWMC{
 		}
 		elseif($key == 'name'){
 			$this->onReady(function() use($value){
-				parent::setName($value, $this->wid);
+				parent::handleNames($value, $this->wid);
 			});
 		}
 		else trigger_error('Can\'t set property '.$key.' on window', E_USER_WARNING);

@@ -151,58 +151,50 @@ abstract class PWMC{
 	}
 
 	public static function get(string $name){
-		return self::getNames()[$name] ?? null;
+		self::setup();
+		$names = self::handleNames();
+		return self::$windows[$names[$name]] ?? null;
 	}
 
 	public static function getNames(){
 		self::setup();
-		$pointer = self::openDataFile(false, $size);
-		$data = $size > 0 ? unserialize(trim(fread($pointer, $size))) : [];
-		self::closeDataFile($pointer);
-
-		$return = [];
-		self::scan();
-		foreach($data as $k => $v){
-			if(isset(self::$windows[$v])) $return[$k] = self::$windows[$v];
-		}
-		return $return;
+		$names = self::handleNames();
+		foreach($names as $k => $v) $names[$k] = self::$windows[$v];
+		return $names;
 	}
 
-	protected static function setName(string $name, int $wid){
-		$pointer = self::openDataFile(true, $size);
-		$data = $size > 0 ? unserialize(trim(fread($pointer, $size))) : [];
-
-		$final = [];
-		self::scan();
-		foreach($data as $k => $v){
-			if(isset(self::$windows[$v]) && $v != $wid) $final[$k] = $v;
-		}
-		$final[$name] = $wid;
-
-		rewind($pointer);
-		ftruncate($pointer, 0);
-	    fwrite($pointer, serialize($final));
-		self::closeDataFile($pointer);
-	}
-
-	private static function openDataFile($write, &$size){
+	protected static function handleNames(string $name = null, int $wid = 0){
 		static $warned = false;
 
-		$lock = $write ? LOCK_EX : LOCK_SH;
+		$lock = !is_null($name) ? LOCK_EX : LOCK_SH;
 		$file = rtrim(sys_get_temp_dir(), '/').'/'.self::DATA_FILE_NAME;
 		$pointer = fopen($file, 'c+');
 		if(!flock($pointer, $lock) && !$warned){
 			trigger_error('PWMC failed to get lock for data file and is running in non threadsafe mode', E_USER_WARNING);
 			$warned = true;
 		}
-		$size = filesize($file);
-		return $pointer;
-	}
 
-	private static function closeDataFile($pointer){
-		fflush($pointer);
+		$data = fgets($pointer);
+		$data = $data == '' ? [] : unserialize(trim($data));
+
+		$names = [];
+		self::scan();
+		foreach($data as $k => $v){
+			if(isset(self::$windows[$v]) && $v != $wid) $names[$k] = $v;
+		}
+
+		if(!is_null($name)){
+			$names[$name] = $wid;
+			rewind($pointer);
+			ftruncate($pointer, 0);
+		    fwrite($pointer, serialize($names));
+			fflush($pointer);
+		}
+
 		flock($pointer, LOCK_UN);
 		fclose($pointer);
+
+		return $names;
 	}
 
 	protected abstract function runStack();
