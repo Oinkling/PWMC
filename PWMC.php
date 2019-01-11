@@ -109,7 +109,7 @@ abstract class PWMC{
 	private static function newWindow($comm){
 		static $reflections = [];
 
-		$class = self::COMM_MAP['comm'] ?? 'Window';
+		$class = self::COMM_MAP[$comm] ?? 'Window';
 		if(!isset($reflections[$class])) $reflections[$class] = new ReflectionClass($class);
 		return $reflections[$class]->newInstanceWithoutConstructor();
 	}
