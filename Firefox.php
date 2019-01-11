@@ -1,11 +1,11 @@
 <?php
 class Firefox extends Window{
 	public function __construct(string $url = ''){
-		parent::__construct('firefox --new-window '.$url);
+		parent::__construct('firefox --new-window "'.$url.'"');
 	}
 
 	public function newTab(string $url = ''){
-		$this->exec('xdotool windowfocus --sync [wid] ; firefox --new-tab '.$url);
+		$this->exec('xdotool windowfocus --sync [wid] ; (firefox --new-tab "'.$url.'" >/dev/null 2>&1 &)');
 		return $this;
 	}
 
