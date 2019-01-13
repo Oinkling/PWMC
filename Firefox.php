@@ -15,8 +15,8 @@ class Firefox extends Window{
 		return $this;
 	}
 
-	public function closeTab(int $tab){
-		$this->switchTab($tab);
+	public function closeTab(int $tab = null){
+		if($tab !== null) $this->switchTab($tab);
 		$this->press('ctrl+w');
 		return $this;
 	}

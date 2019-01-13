@@ -268,10 +268,10 @@ Internally uses xdotool to press alt + `$tab` on the window.
 
 This method returns `$this` to enable chaining.
 
-#### public Firefox closeTab(int $tab)
-Closes the numbered tab
+#### public Firefox closeTab([int $tab])
+Closes the numbered tab if number is given. Else closes current tab.
 
-Internally calls `Firefox::switchTab($tab)` and then uses xdotool to press ctrl + w
+Internally calls `Firefox::switchTab($tab)` as needed. Then uses xdotool to press ctrl + w
 
 This method returns `$this` to enable chaining.
 
