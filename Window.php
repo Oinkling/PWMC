@@ -124,6 +124,9 @@ class Window extends PWMC{
 
 	public function close(){
 		$this->exec('wmctrl -ic [wid]');
+		$this->onReady(function(){
+			$this->state = self::STATE_CLOSED;
+		});
 	}
 
 	// keyboard and mouse functions

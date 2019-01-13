@@ -5,7 +5,7 @@ class Firefox extends Window{
 	}
 
 	public function newTab(string $url = ''){
-		$this->exec('xdotool windowfocus --sync [wid] ; (firefox --new-tab "'.$url.'" >/dev/null 2>&1 &)');
+		$this->exec('xdotool windowfocus --sync [wid] ; (firefox --new-tab "'.$url.'" >/dev/null 2>&1)');
 		return $this;
 	}
 

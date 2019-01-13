@@ -55,6 +55,7 @@ abstract class PWMC{
 
 			// Test if window already excists
 			$win = self::arrayPluck($old, $info['wid']);
+			if($win !== null && $win->state == Window::STATE_CLOSED) continue;
 			if($win === null) $info['comm'] = self::getComm($info['pid']);
 
 			// Test if window should be blocked
